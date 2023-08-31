@@ -47,15 +47,17 @@ def _findTripsByUser(user):
     "TripDAO should not be invoked on an unit test."
   )
 
-def getTripsByUser(user):
+def getTripsByUser(possible_friend):
     loggedUser = _getLoggedUser()
-    if loggedUser:
-      if loggedUser in user.getFriends():
-        return _findTripsByUser(user)
-      else:
-        return []
-    else:
+
+    if not loggedUser:
       raise UserNotLoggedInException()
+
+    if loggedUser in possible_friend.getFriends():
+      return _findTripsByUser(possible_friend)
+    else:
+      return []
+
 
 if __name__ == "__main__":
   pass
