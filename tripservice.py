@@ -4,60 +4,75 @@
 #
 # Exceptions
 #
-class DependendClassCallDuringUnitTestException(Exception):
-  pass
+class DependentClassCallDuringUnitTestException(Exception):
+    pass
+
 
 class UserNotLoggedInException(Exception):
-  pass
+    pass
+
 
 #
 # Classes
 #
 class Trip:
-  pass
+    pass
+
 
 class User:
-  def __init__(self):
-    self.trips = []
-    self.friends = []
-  
-  def addFriend(self, user):
-    self.friends.append(user)
-  
-  def addTrip(self, trip):
-    self.trips.append(trip)
-  
-  def getFriends(self):
-    return self.friends
+    def __init__(self):
+        self.trips = []
+        self.friends = []
+
+    def add_friend(self, user):
+        self.friends.append(user)
+
+    def add_trip(self, trip):
+        self.trips.append(trip)
+
+    def get_friends(self):
+        return self.friends
+
+
 #
 # Functions
 #
-def _isUserLoggedIn(user):
-  raise DependendClassCallDuringUnitTestException(
-    "UserSession.isUserLoggedIn() should not be called in an unit test"
-  )
+def _is_user_logged_in(user):
+    raise DependentClassCallDuringUnitTestException(
+        "UserSession.isUserLoggedIn() should not be called in an unit test"
+    )
 
-def _getLoggedUser():
-  raise DependendClassCallDuringUnitTestException(
-    "UserSession.getLoggedUser() should not be called in an unit test"
-  )
 
-def _findTripsByUser(user):
-  raise DependendClassCallDuringUnitTestException(
-    "TripDAO should not be invoked on an unit test."
-  )
+def _get_logged_user():
+    raise DependentClassCallDuringUnitTestException(
+        "UserSession.getLoggedUser() should not be called in an unit test"
+    )
 
-def getTripsByUser(possible_friend):
-    loggedUser = _getLoggedUser()
 
-    if not loggedUser:
-      raise UserNotLoggedInException()
+def _find_trips_by_user(user):
+    raise DependentClassCallDuringUnitTestException(
+        "TripDAO should not be invoked on an unit test."
+    )
 
-    if loggedUser in possible_friend.getFriends():
-      return _findTripsByUser(possible_friend)
+
+def get_trips_by_user(possible_friend):
+    logged_user = _get_logged_user()
+
+    if not logged_user:
+        raise UserNotLoggedInException()
+
+    if is_friend(logged_user, possible_friend):
+        return _find_trips_by_user(possible_friend)
     else:
-      return []
+        return []
+
+
+def is_friend(user, possible_friend):
+    if user in possible_friend.get_friends():
+        return True
+    else:
+        return False
 
 
 if __name__ == "__main__":
-  pass
+    pass
