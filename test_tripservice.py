@@ -26,10 +26,15 @@ class TestWithLoggedUser:
 
     @patch('tripservice._getLoggedUser', return_value="Tom")
     @patch('tripservice._findTripsByUser', wraps=find_trips_by_user)
-    def test_get_trips_returns_empty_for_freinds_without_trips(self, patch_getLoggedUser, patch_findTripsByUser):
+    def test_get_trips_returns_empty_for_friends_without_trips(self, patch_getLoggedUser, patch_findTripsByUser):
         new_user = User()
         new_user.addFriend("Tom")
         assert getTripsByUser(new_user) == []
 
-
-
+    @patch('tripservice._getLoggedUser', return_value="Tom")
+    @patch('tripservice._findTripsByUser', wraps=find_trips_by_user)
+    def test_get_trips_returns_trips_for_friends(self, patch_getLoggedUser, patch_findTripsByUser):
+        new_user = User()
+        new_user.addFriend("Tom")
+        new_user.addTrip("trip_1")
+        assert "trip_1" in getTripsByUser(new_user)
